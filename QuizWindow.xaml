@@ -1,0 +1,69 @@
+﻿<Window x:Class="MyDictionary.QuizWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Height="400" 
+        Width="600"
+        Title="Quiz"
+        WindowStartupLocation="CenterScreen" 
+        Closed="QuizWindow_Closed"
+        Icon="pack://application:,,,/Resources/icon.bmp">
+
+    <Border BorderThickness="2" BorderBrush="Black" Margin="20">
+
+        <Grid ShowGridLines="False">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5,30,5,5">
+                <TextBlock Text="Question №"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBox x:Name="qNumIndicator" Width="29" Margin="0,2,0,0" TextAlignment="Center" MaxLength="3" KeyDown="qNumIndicator_KeyDown"/>
+                    <TextBlock Text="/" Margin="5,4"/>
+                    <TextBlock x:Name="totalQs" Text="100" Margin="0,4"/>
+                </StackPanel>
+            </StackPanel>
+
+            <DockPanel LastChildFill="False" HorizontalAlignment="Stretch" Grid.Column="1">
+
+                <StackPanel DockPanel.Dock="Top">
+
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Question:" MinWidth="55" Margin="5"/>
+                        <TextBlock x:Name="questionTBL" Text="Placeholder Question" VerticalAlignment="Center" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                    </DockPanel>
+
+                    <DockPanel>
+                        <TextBlock Text="Answer:" VerticalAlignment="Top" MinWidth="55" Margin="5"/>
+                        <StackPanel x:Name="answStackPanel">
+                            <TextBox x:Name="answerTB" VerticalAlignment="Center" Margin="0,5,5,5" GotFocus="UpdateLastActiveTB" KeyDown="AnswerTB_KeyDown" TextChanged="HandleAnswerTBsVisibility"/>
+                            <TextBox VerticalAlignment="Center" Margin="0,5,5,5" GotFocus="UpdateLastActiveTB" KeyDown="AnswerTB_KeyDown" TextChanged="HandleAnswerTBsVisibility"/>
+                            <TextBox VerticalAlignment="Center" Margin="0,5,5,5" GotFocus="UpdateLastActiveTB" KeyDown="AnswerTB_KeyDown" TextChanged="HandleAnswerTBsVisibility"/>
+                            <TextBox VerticalAlignment="Center" Margin="0,5,5,5" GotFocus="UpdateLastActiveTB" KeyDown="AnswerTB_KeyDown" TextChanged="HandleAnswerTBsVisibility"/>
+                            <TextBox VerticalAlignment="Center" Margin="0,5,5,5" GotFocus="UpdateLastActiveTB" KeyDown="AnswerTB_KeyDown" TextChanged="HandleAnswerTBsVisibility"/>
+                            <TextBox VerticalAlignment="Center" Margin="0,5,5,5" GotFocus="UpdateLastActiveTB" KeyDown="AnswerTB_KeyDown" TextChanged="HandleAnswerTBsVisibility"/>
+                            <TextBox VerticalAlignment="Center" Margin="0,5,5,5" GotFocus="UpdateLastActiveTB" KeyDown="AnswerTB_KeyDown" TextChanged="HandleAnswerTBsVisibility"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5">
+                        <Button Width="20" Content="ä" Click="CharacterButtClick"/>
+                        <Button Width="20" Content="ö" Click="CharacterButtClick"/>
+                        <Button Width="20" Content="ü" Click="CharacterButtClick"/>
+                        <Button Width="20" Content="ß" Click="CharacterButtClick"/>
+                        <Button Width="20" Content="-¨" Click="CharacterButtClick"/>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <Button x:Name="answerButt" DockPanel.Dock="Top" HorizontalAlignment="Center" MinHeight="24" MinWidth="60" Margin="5" Click="Answer_ButtClick">
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Answer" Margin="2"/>
+                </Button>
+
+            </DockPanel>
+
+        </Grid>
+    </Border>
+</Window>

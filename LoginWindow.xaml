@@ -1,0 +1,14 @@
+﻿<Window x:Class="MyDictionary.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Login" Height="470" Width="670" WindowStartupLocation="CenterScreen" MinWidth="710" MinHeight="510" 
+        Icon="pack://application:,,,/Resources/icon.bmp">
+    <Grid>
+        <TextBox x:Name="newUsernameTB" VerticalAlignment="Center" HorizontalAlignment="Center" Height="24" TextWrapping="Wrap" Width="120" Margin="230,265,342,181" Text="Username" GotFocus="TextBox_GotFocus" TabIndex="2"/>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="230,247,406,211" Width="56" Text="New user" FontSize="10" Height="12" />
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Height="24" Width="90" Margin="372,265,230,181" Content="Add User" TabIndex="3" Click="Button_Click"/>
+        <ComboBox x:Name="userSelectCB" VerticalAlignment="Center" HorizontalAlignment="Center" Width="120" Height="24" Margin="230,205,342,241" TabIndex="0"/>
+        <Button x:Name="LoginButton" VerticalAlignment="Center" HorizontalAlignment="Center" Height="24" Width="90" Margin="372,205,230,241" Content="Login" TabIndex="1" Click="LoginButton_Click"/>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="230,187,406,271" Width="56" Text="Select user" FontSize="10" Height="12" />
+    </Grid>
+</Window>
