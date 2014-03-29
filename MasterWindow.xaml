@@ -3,13 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         x:Name="masterWindow"
-        Title="Dictionary" Height="500" Width="680" WindowStartupLocation="CenterScreen" MinHeight="200" MinWidth="300" Closed="Window_Closed" 
+        Title="Dictionary" Height="500" Width="680" WindowStartupLocation="CenterScreen" MinHeight="200" MinWidth="300" Closed="SaveAllWords" 
         ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
         Icon="pack://application:,,,/Resources/icon.bmp">
 
     <!--<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">-->
 
-    <TabControl Focusable="True" Margin="8">
+    <TabControl Focusable="True">
 
         <!--Dictionary Tab-->
 
@@ -44,10 +44,10 @@
 
         <!--Add Word Tab-->
 
-        <TabItem x:Name="addWordTab" Focusable="True" Header="Add Word" Loaded="AddWord_TabLoaded">
+        <TabItem x:Name="addWordTab" Focusable="True" Header="Add Word">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <DockPanel LastChildFill="False">
-                    <StackPanel Tag="Type" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal" Margin="10,10,0,0">
+                    <StackPanel x:Name="typeSelectionPanel" Tag="Type" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal" Margin="10,10,0,0">
                         <TextBlock Margin="5" Text="Type:"/>
                         <ComboBox x:Name="typeCBox" Margin="5" MinWidth="55" MaxWidth="100" SelectionChanged="TypeCBox_SelectionChanged" Width="80">
                             <ComboBoxItem>
@@ -69,7 +69,6 @@
                             <Button Width="20" Content="ö" Click="CharacterButtClick" TabIndex="-1"/>
                             <Button Width="20" Content="ü" Click="CharacterButtClick" TabIndex="-1"/>
                             <Button Width="20" Content="ß" Click="CharacterButtClick" TabIndex="-1"/>
-                            <Button Width="20" Content="-¨" Click="CharacterButtClick" TabIndex="-1"/>
                         </StackPanel>
 
                     </StackPanel>
@@ -90,38 +89,36 @@
                                     </ComboBoxItem>
                                 </ComboBox>
 
-                                <DockPanel Tag="Plural Noun" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                <DockPanel Tag="Plural Noun" VerticalAlignment="Center" HorizontalAlignment="Right">
                                     <TextBlock Text="Plural:" Margin="5,7,5,5"/>
                                     <TextBox x:Name="pluralTB" MinWidth="50" Margin="5" LostFocus="SaveActiveTB"/>
+                                    <Button MinWidth="20" Content="-¨" VerticalAlignment="Center"  Click="CharacterButtClick" Margin="0,0,5,0" />
                                 </DockPanel>
                             </DockPanel>
 
 
                         </DockPanel>
 
-                        <DockPanel Tag="Word Noun Adjective Verb" DockPanel.Dock="Top" VerticalAlignment="Center" Margin="0">
-                            <TextBlock DockPanel.Dock="Top" Text="Word:" Margin="5"/>
-                            <TextBox x:Name="wordTB" MinWidth="230" Margin="5" LostFocus="SaveActiveTB"/>
+                        <DockPanel Tag="Word Noun Adjective Verb" DockPanel.Dock="Top" VerticalAlignment="Center">
+                            <TextBlock DockPanel.Dock="Top" Text="Word:" Margin="5,5,5,0"/>
+                            <TextBox x:Name="wordTB" MinWidth="230" Margin="5,0,5,5" LostFocus="SaveActiveTB"/>
                         </DockPanel>
 
                         <DockPanel Tag="Definition Noun Adjective Verb" DockPanel.Dock="Top" VerticalAlignment="Center">
                             <StackPanel x:Name="definitionsStackPanel" Visibility="Visible" Margin="0">
                                 <TextBlock Text="Definitions:" Margin="5,0"/>
-                                <TextBox x:Name="definitionTB1" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="DefinitionBox_TextChanged"/>
-                                <TextBox x:Name="definitionTB2" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="DefinitionBox_TextChanged"/>
-                                <TextBox x:Name="definitionTB3" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="DefinitionBox_TextChanged"/>
-                                <TextBox x:Name="definitionTB4" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="DefinitionBox_TextChanged"/>
-                                <TextBox x:Name="definitionTB5" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="DefinitionBox_TextChanged"/>
-                                <TextBox x:Name="definitionTB6" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="DefinitionBox_TextChanged"/>
-                                <TextBox x:Name="definitionTB7" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="DefinitionBox_TextChanged"/>
+                                <TextBox x:Name="definitionTB1" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="AddWordDefBoxChanged"/>
+                                <TextBox x:Name="definitionTB2" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="AddWordDefBoxChanged"/>
+                                <TextBox x:Name="definitionTB3" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="AddWordDefBoxChanged"/>
+                                <TextBox x:Name="definitionTB4" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="AddWordDefBoxChanged"/>
+                                <TextBox x:Name="definitionTB5" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="AddWordDefBoxChanged"/>
+                                <TextBox x:Name="definitionTB6" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="AddWordDefBoxChanged"/>
+                                <TextBox x:Name="definitionTB7" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="AddWordDefBoxChanged"/>
                             </StackPanel>
                         </DockPanel>
 
-
-
-
                         <DockPanel Tag="Verb" DockPanel.Dock="Top" VerticalAlignment="Center" Margin="0">
-                            <TextBlock Text="3.P.Sg.Präsens:" DockPanel.Dock="Top" Margin="5,0"/>
+                            <TextBlock Text="3.P.Sg.Präsens:" DockPanel.Dock="Top" Margin="5,5,5,0"/>
                             <TextBox x:Name="psgprasTB" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB"/>
                         </DockPanel>
 
@@ -132,7 +129,7 @@
 
                         <DockPanel Tag="Verb" DockPanel.Dock="Top" VerticalAlignment="Center" Margin="0,0,0,5">
                             <TextBlock Text="Partizip II:" DockPanel.Dock="Top" Margin="5,0"/>
-                            <TextBox x:Name="partizip2" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB"/>
+                            <TextBox x:Name="partizip2TB" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB"/>
                         </DockPanel>
 
                         <DockPanel Tag="Verb" DockPanel.Dock="Top" Margin="0">
@@ -159,15 +156,150 @@
                         </DockPanel>
 
                         <DockPanel x:Name="buttPanel" Tag="Buttons" DockPanel.Dock="Left" Margin="0,5">
-                            <Button x:Name="addWTabClearButt" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Clear All" Click="EmptyAll_ButtClick" Margin="5"/>
-                            <Button x:Name="addWordButt" DockPanel.Dock="Left" Content="Add Word" VerticalAlignment="Center" HorizontalAlignment="Stretch" Click="AddWordButton_Click" Margin="5"/>
+                            <Button x:Name="addWTabClearButt" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Clear All" ToolTip="Clear all fields" Click="AddWordEmptyAll_ButtClick" Margin="5"/>
+                            <Button x:Name="saveWordsButt" DockPanel.Dock="Left" Content="Save Words" VerticalAlignment="Center" ToolTip="Save all words to hard drive" Click="SaveAllWords"/>
+                            <Button x:Name="addWordButt" DockPanel.Dock="Left" Content="Add Word" VerticalAlignment="Center" ToolTip="Add word to dictionary" Click="AddWordButton_Click" Margin="5"/>
                         </DockPanel>
-                        
+
                     </DockPanel>
-                    
                 </DockPanel>
             </ScrollViewer>
         </TabItem>
+
+        <!--Edit Word tab-->
+
+        <TabItem Header="Edit Word">
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,5,0,0">
+                    <TextBox x:Name="searchWordTB" MinWidth="150" Margin="5" LostFocus="SaveActiveTB" />
+                    <Button x:Name="searchWordButt" Content="Find Word" Margin="5" ToolTip="Load the word's items, if it is in the dictionary" Click="FindWord_ButtClick"/>
+
+                </DockPanel>
+
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <DockPanel x:Name="searchData" Tag="SearchData" LastChildFill="False">
+
+                        <DockPanel x:Name="sTypeAndDatePanel" LastChildFill="False" Tag="Type" DockPanel.Dock="Top" HorizontalAlignment="Left" MinWidth="240" Margin="15,10,0,0">
+
+                            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                <Button Width="20" Content="ä" Click="CharacterButtClick" TabIndex="-1"/>
+                                <Button Width="20" Content="ö" Click="CharacterButtClick" TabIndex="-1"/>
+                                <Button Width="20" Content="ü" Click="CharacterButtClick" TabIndex="-1"/>
+                                <Button Width="20" Content="ß" Click="CharacterButtClick" TabIndex="-1"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="5,0,0,0">
+                                <TextBlock Text="Date:" VerticalAlignment="Center" Margin="5"/>
+                                <DatePicker x:Name="sAddWDatePicker" Focusable="False" VerticalAlignment="Center" Margin="0,5,5,5" FirstDayOfWeek="Monday" SelectedDateFormat="Long" TabIndex="-1"/>
+                            </StackPanel>
+
+                        </DockPanel>
+
+                        <DockPanel x:Name="sWordElemsWrapPanel" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="230" MaxWidth="417" Margin="10,10,0,0">
+                            <DockPanel Tag="Noun Verb" DockPanel.Dock="Top" Margin="0">
+                                <DockPanel x:Name="sNounContainer" Tag="Noun" DockPanel.Dock="Top" VerticalAlignment="Center" HorizontalAlignment="Stretch" MinWidth="255">
+                                    <TextBlock DockPanel.Dock="Left" x:Name="sArticleTBl"  Text="Article:" Margin="5,7,5,5"/>
+                                    <ComboBox DockPanel.Dock="Left" x:Name="sArticleCB"  MinWidth="45" Margin="5">
+                                        <ComboBoxItem>
+                                            <TextBlock Text="der"/>
+                                        </ComboBoxItem>
+                                        <ComboBoxItem>
+                                            <TextBlock Text="das"/>
+                                        </ComboBoxItem>
+                                        <ComboBoxItem>
+                                            <TextBlock Text="die"/>
+                                        </ComboBoxItem>
+                                    </ComboBox>
+
+                                    <DockPanel Tag="Plural Noun" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <TextBlock Text="Plural:" Margin="5,7,5,5"/>
+                                        <TextBox x:Name="sPluralTB" MinWidth="50" Margin="5" LostFocus="SaveActiveTB"/>
+                                        <Button MinWidth="20" Content="-¨" Click="CharacterButtClick" VerticalAlignment="Center" Margin="5"/>
+                                    </DockPanel>
+                                </DockPanel>
+                            </DockPanel>
+
+                            <DockPanel Tag="Word Noun Adjective Verb" DockPanel.Dock="Top" VerticalAlignment="Center" Margin="0">
+                                <TextBlock DockPanel.Dock="Top" Text="Word:" Margin="5,5,5,0"/>
+                                <TextBox x:Name="sWordTB" MinWidth="230" Margin="5,5,5,10" LostFocus="SaveActiveTB"/>
+                            </DockPanel>
+
+                            <DockPanel Tag="Definition Noun Adjective Verb" DockPanel.Dock="Top" VerticalAlignment="Center">
+                                <StackPanel x:Name="sDefinitionsStackPanel" Visibility="Visible" Margin="0">
+                                    <TextBlock Text="Definitions:" Margin="5,0"/>
+                                    <TextBox x:Name="sDefinitionTB1" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
+                                    <TextBox x:Name="sDefinitionTB2" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
+                                    <TextBox x:Name="sDefinitionTB3" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
+                                    <TextBox x:Name="sDefinitionTB4" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
+                                    <TextBox x:Name="sDefinitionTB5" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
+                                    <TextBox x:Name="sDefinitionTB6" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
+                                    <TextBox x:Name="sDefinitionTB7" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
+                                </StackPanel>
+                            </DockPanel>
+
+                            <DockPanel x:Name="verbContainer" DockPanel.Dock="Top">
+
+                                <DockPanel Tag="Verb" DockPanel.Dock="Top" VerticalAlignment="Center" Margin="0">
+                                    <TextBlock Text="3.P.Sg.Präsens:" DockPanel.Dock="Top" Margin="5,0"/>
+                                    <TextBox x:Name="sPsgprasTB" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB"/>
+                                </DockPanel>
+
+                                <DockPanel Tag="Verb" DockPanel.Dock="Top" VerticalAlignment="Center" Margin="0,0,0,5">
+                                    <TextBlock Text="Präteritum:" DockPanel.Dock="Top" Margin="5,0"/>
+                                    <TextBox x:Name="sPrateritumTB" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB"/>
+                                </DockPanel>
+
+                                <DockPanel Tag="Verb" DockPanel.Dock="Top" VerticalAlignment="Center" Margin="0,0,0,5">
+                                    <TextBlock Text="Partizip II:" DockPanel.Dock="Top" Margin="5,0"/>
+                                    <TextBox x:Name="sPartizip2TB" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB"/>
+                                </DockPanel>
+
+                                <DockPanel Tag="Verb" DockPanel.Dock="Top" Margin="0">
+                                    <TextBlock Text="Prepositions (separated by a space)" VerticalAlignment="Center" TextWrapping="Wrap" Margin="5,2.5" Width="103" FontSize="10"/>
+                                    <TextBox x:Name="sPreposTB" VerticalAlignment="Center" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB"/>
+                                </DockPanel>
+
+                                <DockPanel x:Name="sCaseContainer" Tag="Verb" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Text="Case:" VerticalAlignment="Center" Margin="5"/>
+                                    <ComboBox x:Name="sVCaseCB" VerticalAlignment="Center" HorizontalAlignment="Left" Width="42" Margin="5">
+                                        <ComboBoxItem>
+                                            <TextBlock Text="A"/>
+                                        </ComboBoxItem>
+                                        <ComboBoxItem>
+                                            <TextBlock Text="D"/>
+                                        </ComboBoxItem>
+                                        <ComboBoxItem>
+                                            <TextBlock Text="N"/>
+                                        </ComboBoxItem>
+                                        <ComboBoxItem>
+                                            <TextBlock Text="G"/>
+                                        </ComboBoxItem>
+                                    </ComboBox>
+                                </DockPanel>
+                            </DockPanel>
+
+                            <DockPanel x:Name="sButtPanel" Tag="Buttons" DockPanel.Dock="Left" Margin="0,5">
+                                <Grid DockPanel.Dock="Top">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button x:Name="sDeleteWord" Grid.Column="0" Content="Delete Word" Margin="5" Click="sDeleteWord_Click" ToolTip="Delete the current word from the dictionary"/>
+                                    <Button x:Name="sSaveWordsButt" Grid.Column="1" Content="Save Words" Margin="5" Click="SaveAllWords" ToolTip="Save all words to hard drive"/>
+                                    <Button x:Name="sReloadWord" Grid.Column="2" Content="Reload Word" Margin="5" Click="sReloadWord_Click" ToolTip="Reload the current word's items"/>
+                                </Grid>
+                                <Button x:Name="sSaveWordButt" Content="Save Changes" VerticalAlignment="Center" Margin="5,0" Click="sSaveWordButt_Click" ToolTip="Save changes made to the word's items"/>
+                            </DockPanel>
+
+                        </DockPanel>
+                    </DockPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </TabItem>
+
 
         <!--Quizzes tab-->
 
@@ -184,7 +316,7 @@
                         </StackPanel>
                         <StackPanel>
                             <TextBlock Text="End Date" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,5,5,0"/>
-                            <DatePicker x:Name="quizEndDate" Focusable="False" Margin="5,0,5,5" SelectedDateFormat="Long"/>
+                            <DatePicker x:Name="quizEndDate" Focusable="False" Margin="5,0,5,5" SelectedDateFormat="Long" DisplayDateEnd="{x:Static sys:DateTime.Now}"/>
                         </StackPanel>
                     </StackPanel>
 

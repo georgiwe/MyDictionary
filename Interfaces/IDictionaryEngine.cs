@@ -7,6 +7,8 @@
 
     public interface IDictionaryEngine
     {
+        IFactory Factory { get; }
+
         IUser User { get; }
 
         IList<IUser> AllUsers { get; }
@@ -25,7 +27,7 @@
 
         void RemoveWord(IWord word);
 
-        void ReplaceWord(IWord word);
+        void ReplaceWord(IWord wordToReplace, IWord replacement);
 
         void SaveWords();
 

@@ -33,6 +33,7 @@
         private IDictionaryEngine engine;
         private IAnnouncer announcer;
         private TextBox lastActiveTB;
+        private IWord wordToEdit;
 
         public MasterWindow(string username)
         {
@@ -47,6 +48,9 @@
 
             this.searchBoxDefaultText = searchBox.Text;
             this.dictDefBoxDefaultText = dictDefinition.Text;
+
+            this.InitializeAddWordTab();
+            this.InitializeEditWordTab();
         }
 
         private IDictionaryEngine Engine
@@ -115,27 +119,12 @@
         {
             var selection = ((typeCBox.SelectedItem as ComboBoxItem).Content as TextBlock).Text;
 
-            this.HideAllPanels(this.wordElemsWrapPanel);
-            this.HandleDefinitionBoxes();
-            this.EmptyAllTextBoxes(this.wordElemsWrapPanel);
+            this.HidePanelsAndEmptyTextBoxes(this.wordElemsWrapPanel);
+            this.HandleDefinitionBoxesInPanel(this.definitionsStackPanel);
             this.articleCB.SelectedIndex = -1;
             this.vCaseCB.SelectedIndex = -1;
 
-            foreach (var item in wordElemsWrapPanel.Children)
-            {
-                var itemAsPanel = item as Panel;
-
-                if (itemAsPanel != null)
-                {
-                    var labels = itemAsPanel.Tag.ToString();
-
-                    if (labels.Contains(selection) ||
-                        itemAsPanel.Tag.ToString() == "Type")
-                    {
-                        itemAsPanel.Visibility = Visibility.Visible;
-                    }
-                }
-            }
+            this.ShowNecessaryItems(this.wordElemsWrapPanel, selection);
 
             if (selection == "Verb")
             {
@@ -157,85 +146,162 @@
             }
         }
 
+        private void ShowNecessaryItems(Panel panel, string reqTagInOrderToShow)
+        {
+            foreach (var item in panel.Children)
+            {
+                var itemAsPanel = item as Panel;
+
+                if (itemAsPanel != null)
+                {
+                    if (itemAsPanel.Tag == null) continue;
+
+                    var labels = itemAsPanel.Tag.ToString();
+
+                    if (labels.Contains(reqTagInOrderToShow) ||
+                        itemAsPanel.Tag.ToString() == "Type")
+                    {
+                        itemAsPanel.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+        }
+
+        private WordArticles AssignArticle(WordType type, ComboBox cbox)
+        {
+            WordArticles article = WordArticles.NotApplicable;
+
+            if (type == WordType.Noun)
+            {
+                var artSelection = ((TextBlock)((ComboBoxItem)cbox.SelectedItem).Content).Text;
+
+                article = (WordArticles)Enum.Parse(typeof(WordArticles), artSelection);
+            }
+
+            return article;
+        }
+
+        private WordType AssignType(ComboBox cbox)
+        {
+            var cbItem = cbox.SelectedItem as ComboBoxItem;
+            var itemContent = cbItem.Content as TextBlock;
+            var typeSelection = itemContent.Text;
+
+            WordType type = (WordType)Enum.Parse(typeof(WordType), typeSelection);
+
+            return type;
+        }
+
+        private string AssignContent(WordType type, TextBox tbox)
+        {
+            string content = null;
+
+            if (tbox.Text != null)
+            {
+                content = tbox.Text.ToLower();
+                content = content.Trim();
+                content = Helper.CutMultipleSpaces(content);
+
+                if (type == WordType.Noun)
+                {
+                    content = char.ToUpper(content[0]) + content.Substring(1).ToLower();
+                }
+            }
+
+            return content;
+        }
+
+        private string[] GetVerbForms(WordType type, TextBox prt, TextBox part, TextBox psg)
+        {
+            string pratit = string.Empty;
+            string partiz2 = string.Empty;
+            string psgpras = string.Empty;
+
+            if (type == WordType.Verb)
+            {
+                pratit = prt.Text.Trim().ToLower();
+                partiz2 = part.Text.Trim().ToLower();
+                psgpras = psg.Text.Trim().ToLower();
+
+                pratit = Helper.CutMultipleSpaces(pratit);
+                partiz2 = Helper.CutMultipleSpaces(partiz2);
+                psgpras = Helper.CutMultipleSpaces(psgpras);
+            }
+
+            return new string[] { pratit, partiz2, psgpras };
+        }
+
+        private VerbCase AssignVerbCase(WordType type, ComboBox verbCaseCbox)
+        {
+            var vCase = VerbCase.NotApplicable;
+
+            if (type == WordType.Verb)
+            {
+                var selectedItem = verbCaseCbox.SelectedItem as ComboBoxItem;
+
+                var selectedVerbCaseStr = (selectedItem.Content as TextBlock).Text;
+
+                vCase = (VerbCase)Enum.Parse(typeof(VerbCase), selectedVerbCaseStr);
+            }
+
+            return vCase;
+        }
+
+        private IList<string> AssignPrepositions(TextBox prepTBox)
+        {
+            return prepTBox.Text
+                        .Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                        .Select(p => Helper.CutMultipleSpaces(p.Trim().ToLower()))
+                        .ToList();
+        }
+
+        private IList<string> AssignDefinitions(Panel boxesContainer)
+        {
+            var allDefBoxes = this.GetAllTextBoxes(boxesContainer);
+            var nonEmptyDefBoxes = this.GetAllNonEmptyBoxes(allDefBoxes);
+
+            var definitions = nonEmptyDefBoxes
+                .Select(tb => Helper.CutMultipleSpaces(tb.Text.Trim().ToLower()))
+                .ToList();
+
+            return definitions;
+        }
+
         private void AddWordButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 // Word type
-                string typeSelection = ((TextBlock)((ComboBoxItem)typeCBox.SelectedValue).Content).Text;
-                WordType type = (WordType)Enum.Parse(typeof(WordType), typeSelection);
+                var type = this.AssignType(this.typeCBox);
 
                 // Article
-                WordArticles article = WordArticles.NotApplicable;
-
-                if (type == WordType.Noun)
-                {
-                    var artSelection = ((TextBlock)((ComboBoxItem)articleCB.SelectedItem).Content).Text;
-
-                    article = (WordArticles)Enum.Parse(typeof(WordArticles), artSelection);
-                }
+                var article = this.AssignArticle(type, this.articleCB);
 
                 // Date added
                 var added = addWDatePicker.SelectedDate as DateTime?;
 
-                string content = null;
-
-                if (wordTB.Text != null)
-                {
-                    content = wordTB.Text.ToLower();
-                    content = content.Trim();
-                    content = Helper.CutMultipleSpaces(content);
-
-                    if (type == WordType.Noun)
-                    {
-                        content = char.ToUpper(content[0]) + content.Substring(1).ToLower();
-                    }
-                }
+                // Content
+                string content = this.AssignContent(type, this.wordTB);
 
                 // Plural
                 string plural = pluralTB.Text.Trim();
                 plural = Helper.CutMultipleSpaces(plural);
 
                 // Verb forms
-                string pratit = string.Empty;
-                string partiz2 = string.Empty;
-                string psgpras = string.Empty;
-
-                if (type == WordType.Verb)
-                {
-                    pratit = prateritumTB.Text.Trim().ToLower();
-                    partiz2 = partizip2.Text.Trim().ToLower();
-                    psgpras = psgprasTB.Text.Trim().ToLower();
-
-                    pratit = Helper.CutMultipleSpaces(pratit);
-                    partiz2 = Helper.CutMultipleSpaces(partiz2);
-                    psgpras = Helper.CutMultipleSpaces(psgpras);
-                }
+                var forms = this.GetVerbForms(
+                    type, this.prateritumTB, this.partizip2TB, this.psgprasTB);
+                var pratit = forms[0];
+                var partiz2 = forms[1];
+                var psgpras = forms[2];
 
                 // Verb case
-                var vCase = VerbCase.NotApplicable;
-
-                if (type == WordType.Verb)
-                {
-                    var selectedItem = vCaseCB.SelectedItem as ComboBoxItem;
-
-                    var selectedVerbCaseStr = (selectedItem.Content as TextBlock).Text;
-
-                    vCase = (VerbCase)Enum.Parse(typeof(VerbCase), selectedVerbCaseStr);
-                }
+                var vCase = this.AssignVerbCase(type, this.vCaseCB);
 
                 // Prepositions
-                var prepos = new List<string>(preposTB.Text
-                    .Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                    .Select(p => Helper.CutMultipleSpaces(p.Trim().ToLower())));
+                var prepos = this.AssignPrepositions(this.preposTB);
 
                 // Definitions
-                var allDefBoxes = this.GetAllTextBoxes(definitionsStackPanel);
-                var nonEmptyDefBoxes = this.GetAllNonEmptyBoxes(allDefBoxes);
-                var definitions = nonEmptyDefBoxes
-                    .Select(tb => Helper.CutMultipleSpaces(tb.Text.Trim().ToLower()));
-
-                var definition = new List<string>(definitions);
+                var definition = this.AssignDefinitions(this.definitionsStackPanel);
 
                 this.engine.AddWord(
                     type, article, vCase, content, added, prepos, definition, plural, pratit, partiz2, psgpras);
@@ -243,20 +309,30 @@
             catch (NullReferenceException)
             {
                 this.announcer.WordNotAdded();
+
+                return;
             }
             catch (ArgumentException ex)
             {
-                this.announcer.CustomMsg(ex.ParamName);
+                this.announcer.CustomErrorMsg(ex.Message);
+
+                return;
+            }
+            catch (WordExistsException ex)
+            {
+                this.announcer.CustomErrorMsg(ex.Message);
+
+                return;
             }
             catch (IndexOutOfRangeException)
             {
             }
 
-            this.EmptyAll_ButtClick(new object(), new RoutedEventArgs());
+            this.AddWordEmptyAll_ButtClick(new object(), new RoutedEventArgs());
             this.RefreshData();
         }
 
-        private void Window_Closed(object sender, EventArgs e)
+        private void SaveAllWords(object sender, EventArgs e)
         {
             this.engine.SaveWords();
         }
@@ -288,12 +364,19 @@
             }
         }
 
-        private void AddWord_TabLoaded(object sender, RoutedEventArgs e)
+        private void InitializeAddWordTab()
         {
             this.HideAllPanels(this.wordElemsWrapPanel);
-
+            this.typeSelectionPanel.Visibility = Visibility.Visible;
             this.addWordButt.Visibility = Visibility.Collapsed;
             this.addWTabClearButt.Visibility = Visibility.Collapsed;
+        }
+
+        private void InitializeEditWordTab()
+        {
+            this.HidePanelsAndEmptyTextBoxes(this.sWordElemsWrapPanel);
+            this.sTypeAndDatePanel.Visibility = Visibility.Collapsed;
+            this.sNounContainer.Visibility = Visibility.Collapsed;
         }
 
         private void HideAllPanels(Panel container)
@@ -304,10 +387,13 @@
 
                 if (itemAsPanel != null)
                 {
-                    if (itemAsPanel.Tag.ToString() != "Type")
-                    {
-                        itemAsPanel.Visibility = Visibility.Collapsed;
-                    }
+                    //if (itemAsPanel.Tag.ToString() != "Type" ||
+                    //    itemAsPanel.Tag == null)
+                    //{
+                    //    itemAsPanel.Visibility = Visibility.Collapsed;
+                    //}
+
+                    itemAsPanel.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -324,21 +410,28 @@
             this.AddStringToContainer(senderAsBtn.Content as string, this.lastActiveTB);
         }
 
-        private void DefinitionBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void AddWordDefBoxChanged(object sender, TextChangedEventArgs e)
         {
-            this.HandleDefinitionBoxes();
+            this.HandleDefinitionBoxesInPanel(this.definitionsStackPanel);
         }
 
-        private void HandleDefinitionBoxes()
+        private void EditWordDefBoxChanged(object sender, TextChangedEventArgs e)
         {
-            var allTextBoxes = this.GetAllTextBoxes(definitionsStackPanel);
+            this.HandleDefinitionBoxesInPanel(this.sDefinitionsStackPanel);
+        }
+
+        private void HandleDefinitionBoxesInPanel(Panel panel)
+        {
+            var allTextBoxes = this.GetAllTextBoxes(panel);
 
             this.HideAllEmptyTextBoxes(allTextBoxes);
 
             var visibleBoxes = this.GetAllNonEmptyBoxes(allTextBoxes);
-            var fullVisibleBoxesCount = visibleBoxes.Count(tb => !string.IsNullOrWhiteSpace(tb.Text));
+            var fullVisibleBoxesCount = visibleBoxes
+                .Count(tb => !string.IsNullOrWhiteSpace(tb.Text));
 
-            if (visibleBoxes.Count() == fullVisibleBoxesCount && fullVisibleBoxesCount < allTextBoxes.Count)
+            if (visibleBoxes.Count() == fullVisibleBoxesCount &&
+                fullVisibleBoxesCount < allTextBoxes.Count)
             {
                 var firstInvis = allTextBoxes.First(tb => tb.Visibility == Visibility.Collapsed);
 
@@ -381,12 +474,16 @@
 
         private void Quizzes_SetDates(object sender, RoutedEventArgs e)
         {
-            var allWords = this.engine.GetAllWords();
+            var oldestWordAddedDate = this.engine
+                .GetAllWords()
+                .Min(w => w.DateAdded);
 
-            var oldestWordAddedDate = allWords.Min(w => w.DateAdded);
+            this.quizEndDate.DisplayDateStart = oldestWordAddedDate;
+            this.quizStartDate.DisplayDateStart = oldestWordAddedDate;
 
-            quizStartDate.SelectedDate = oldestWordAddedDate;
-            quizEndDate.SelectedDate = DateTime.Now.Date;
+            this.quizStartDate.SelectedDate = oldestWordAddedDate;
+            this.quizEndDate.SelectedDate = DateTime.Now.Date;
+
         }
 
         private void EmptyAllTextBoxes(Panel container)
@@ -437,10 +534,24 @@
             }
         }
 
-        private void EmptyAll_ButtClick(object sender, RoutedEventArgs e)
+        private void AddWordEmptyAll_ButtClick(object sender, RoutedEventArgs e)
         {
-            this.EmptyAllTextBoxes(this.wordElemsWrapPanel);
-            this.EmptyAllComboBoxes(this.wordElemsWrapPanel);
+            this.ResetContents(this.wordElemsWrapPanel);
+        }
+
+        //private void EditWordEmptyAll_ButtClick(object sender, RoutedEventArgs e)
+        //{
+        //    this.ResetContents(this.sWordElemsWrapPanel);
+        //    this.ResetContents(this.sTypeAndDatePanel);
+        //    this.searchWordTB.Text = string.Empty;
+
+        //    this.HideAllPanels(this.searchData);
+        //}
+
+        private void ResetContents(Panel panel)
+        {
+            this.EmptyAllTextBoxes(panel);
+            this.EmptyAllComboBoxes(panel);
         }
 
         private void BeginQuiz_ButtClick(object sender, RoutedEventArgs e)
@@ -491,6 +602,254 @@
             quizWindow.Show();
 
             this.Hide();
+        }
+
+        private void HidePanelsAndEmptyTextBoxes(Panel panel)
+        {
+            this.HideAllPanels(panel);
+            this.EmptyAllTextBoxes(panel);
+        }
+
+        private void FindWord_ButtClick(object sender, RoutedEventArgs e)
+        {
+            this.InitializeEditWordTab();
+
+            var searchFor = searchWordTB.Text.Trim();
+
+            var searchResult = this.engine.GetWord(searchFor);
+
+            if (searchResult == null)
+            {
+                this.announcer.WordNotFound(searchFor);
+
+                this.searchWordTB.Focus();
+                this.searchWordTB.SelectAll();
+
+                return;
+            }
+            
+            this.LoadWordItems(searchResult);
+
+            this.sDefinitionsStackPanel.Children
+                .OfType<TextBox>()
+                .FirstOrDefault(tb => tb.Text == string.Empty)
+                .Focus();
+
+            this.wordToEdit = searchResult;
+        }
+
+        private void LoadWordItems(IWord word)
+        {
+            // Handle visibility of fields
+            this.sTypeAndDatePanel.Visibility = Visibility.Visible;
+            this.sButtPanel.Visibility = Visibility.Visible;
+            this.ShowNecessaryItems(this.sWordElemsWrapPanel, word.Type.ToString());
+            this.HandleDefinitionBoxesInPanel(this.sDefinitionsStackPanel);
+
+            // Set Word field
+            this.sWordTB.Text = word.Content;
+
+            // Set date added field
+            this.sAddWDatePicker.SelectedDate = word.DateAdded;
+
+            // Set definitions
+            var amtOfNeededTBs = this.sDefinitionsStackPanel
+                .Children
+                .OfType<TextBox>()
+                .Take(word.Definition.Count);
+
+            int defIndex = 0;
+            var definitions = word.Definition;
+
+            foreach (var box in amtOfNeededTBs)
+            {
+                box.Visibility = Visibility.Visible;
+                box.Text = definitions[defIndex++];
+            }
+            
+            // Set specific fields, depending on word type
+            if (word.Type == WordType.Noun)
+            {
+                this.FillNounItems(word);
+            }
+
+            else if (word.Type == WordType.Verb)
+            {
+                this.FillVerbItems(word);
+            }
+        }
+
+        private void FillNounItems(IWord noun)
+        {
+            this.sNounContainer.Visibility = Visibility.Visible;
+
+            this.sArticleCB.SelectedIndex =
+                this.GetAppropriateComboBoxIndex(noun.Article);
+
+            this.sPluralTB.Text = noun.Plural;
+        }
+
+        private void FillVerbItems(IWord verb)
+        {
+            // Fill verb forms
+            this.sPsgprasTB.Text = verb.PSgPras;
+            this.sPrateritumTB.Text = verb.Pratitium;
+            this.sPartizip2TB.Text = verb.Partizip2;
+
+            this.sPreposTB.Text = string.Join(" ", verb.Prepositions);
+
+            this.sVCaseCB.SelectedIndex = this.GetAppropriateComboBoxIndex(verb.Case);
+        }
+
+        private int GetAppropriateComboBoxIndex(Enum inputEnum)
+        {
+            if (inputEnum is WordArticles)
+            {
+                switch ((WordArticles)inputEnum)
+                {
+                    case WordArticles.der: return 0;
+                    case WordArticles.das: return 1;
+                    case WordArticles.die: return 2;
+                }
+            }
+
+            else if (inputEnum is WordType)
+            {
+                switch ((WordType)inputEnum)
+                {
+                    case WordType.Adjective: return 1;
+                    case WordType.Noun: return 0;
+                    case WordType.Verb: return 2;
+                }
+            }
+
+            else if (inputEnum is VerbCase)
+            {
+                switch ((VerbCase)inputEnum)
+                {
+                    case VerbCase.A: return 0;
+                    case VerbCase.D: return 1;
+                    case VerbCase.G: return 2;
+                    case VerbCase.N: return 3;
+                }
+            }
+
+            return -1;
+        }
+
+        private void sSaveWordButt_Click(object sender, RoutedEventArgs e)
+        {
+            var confirmation =
+                this.announcer.AskForConfirmation(
+                        string.Format("Are you sure you want to save changes to {0}?", 
+                            this.wordToEdit.Content));
+
+            if (confirmation == false) return;
+
+            IWord updatedWord = null;
+
+            try
+            {
+                var type = this.wordToEdit.Type;
+
+                var article = this.AssignArticle(type, this.sArticleCB);
+                var added = sAddWDatePicker.SelectedDate as DateTime?;
+
+                string content = this.AssignContent(type, this.sWordTB);
+                bool contentHasChanged = this.wordToEdit.Content != content;
+
+                string plural = sPluralTB.Text.Trim();
+                plural = Helper.CutMultipleSpaces(plural);
+
+                var forms = this.GetVerbForms(
+                    type, this.sPrateritumTB, this.sPartizip2TB, this.sPsgprasTB);
+                var pratit = forms[0];
+                var partiz2 = forms[1];
+                var psgpras = forms[2];
+
+                var vCase = this.AssignVerbCase(type, this.sVCaseCB);
+
+                var prepos = this.AssignPrepositions(this.sPreposTB);
+
+                var definition = this.AssignDefinitions(this.sDefinitionsStackPanel);
+
+                updatedWord = this.engine.Factory.CreateWord(
+                    type, article, vCase, content, added, prepos, definition, plural, pratit, partiz2, psgpras);
+
+                if (contentHasChanged == false ||
+                    this.engine.GetWord(content) == null)
+                {
+                    this.engine.ReplaceWord(this.wordToEdit, updatedWord);
+                }
+                else
+                {
+                    throw new WordExistsException(
+                        "Word {0} already exists in the dictionery!", updatedWord);
+                }
+            }
+            catch (NullReferenceException)
+            {
+                this.announcer.WordNotEdited(this.wordToEdit);
+
+                return;
+            }
+            catch (ArgumentException ex)
+            {
+                this.announcer.CustomErrorMsg(ex.Message);
+
+                return;
+            }
+            catch (WordExistsException ex)
+            {
+                this.announcer.AlreadyExists(ex.Word, ex.Message);
+
+                return;
+            }
+            catch (IndexOutOfRangeException)
+            {
+            }
+
+            this.announcer.SuccessfulyEdited(this.wordToEdit);
+            this.RefreshData();
+
+            this.InitializeEditWordTab();
+        }
+
+        private void sDeleteWord_Click(object sender, RoutedEventArgs e)
+        {
+            var lookingFor = this.searchWordTB.Text.Trim();
+
+            var wordToDel = this.engine.GetWord(lookingFor);
+
+            if (wordToDel == null)
+            {
+                this.announcer.WordNotFound(lookingFor);
+
+                return;
+            }
+
+            var confirmation = 
+                this.announcer.AskForConfirmation(
+                    string.Format(
+                        "Are you sure you want to delete word {0}?", 
+                            lookingFor));
+
+            if (confirmation == false) return;
+
+            this.engine.RemoveWord(wordToDel);
+            this.RefreshData();
+
+            this.InitializeEditWordTab();
+
+            this.searchWordTB.Focus();
+            this.searchWordTB.SelectAll();
+        }
+
+        private void sReloadWord_Click(object sender, RoutedEventArgs e)
+        {
+            this.InitializeEditWordTab();
+
+            this.LoadWordItems(this.wordToEdit);
         }
     }
 }

@@ -104,7 +104,9 @@
     <Compile Include="Classes\WPFannouncer.cs" />
     <Compile Include="Enums\QuizType.cs" />
     <Compile Include="Enums\VerbCase.cs" />
+    <Compile Include="Helpers\QuizData.cs" />
     <Compile Include="Helpers\QuizException.cs" />
+    <Compile Include="Helpers\WordExistsException.cs" />
     <Compile Include="Interfaces\IAnnouncer.cs" />
     <Compile Include="Interfaces\IWord.cs" />
     <Compile Include="Classes\Word.cs" />

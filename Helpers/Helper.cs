@@ -1,4 +1,4 @@
-﻿namespace MyDictionary.Classes
+﻿namespace MyDictionary.Helpers
 {
     using System;
     using System.Text.RegularExpressions;
@@ -27,6 +27,30 @@
 
                 case "Verb Past Tenses Quiz":
                     return QuizType.VerbPastTenses;
+
+                default:
+                    throw new ArgumentOutOfRangeException("Unexpected quiz type. Cannot parse.");
+            }
+        }
+
+        public static string QuizTypeEnumToString(QuizType type)
+        {
+            switch (type)
+            {
+                case QuizType.ForeignToNative:
+                    return "Foreign to Native Language Word Quiz";
+
+                case QuizType.VerbPastTenses:
+                    return "Native to Foreign Language Word Quiz";
+
+                case QuizType.Article:
+                    return "Article Quiz";
+
+                case QuizType.Preposition:
+                    return "Preposition Quiz";
+
+                case QuizType.NativeToForeign:
+                    return "Verb Past Tenses Quiz";
 
                 default:
                     throw new ArgumentOutOfRangeException("Unexpected quiz type. Cannot parse.");

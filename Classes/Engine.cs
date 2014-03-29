@@ -8,6 +8,7 @@
     using System.Text.RegularExpressions;
 
     using MyDictionary.Enums;
+    using MyDictionary.Helpers;
     using MyDictionary.Interfaces;
 
     public class Engine : IDictionaryEngine
@@ -36,6 +37,11 @@
 
             this.saveLoadWordsFilePath = this.User.Name + @"_words.txt";
             this.LoadWords();
+        }
+
+        public virtual IFactory Factory
+        {
+            get { return this.factory; }
         }
 
         public virtual IUser User
@@ -99,21 +105,21 @@
             IWord wordToAdd = this.factory.CreateWord(
                 type, article, vCase, content, added, prepos, definition, plural, pratit, partizip2, psgpras);
 
+            if (this.words.Contains(wordToAdd))
+            {
+                throw new WordExistsException(
+                    "Word already exists in the dictionary.");
+            }
+
             this.words.Add(wordToAdd);
             this.announcer.WordAdded(wordToAdd);
         }
 
         public virtual IWord GetWord(string content)
         {
-            foreach (var word in this.words)
-            {
-                if (word.Content.ToLower() == content.ToLower())
-                {
-                    return word;
-                }
-            }
+            content = content.ToLower();
 
-            return null;
+            return this.words.FirstOrDefault(w => w.Content.ToLower() == content);
         }
 
         public virtual IList<IWord> GetAllWords()
@@ -131,14 +137,15 @@
             }
 
             var acceptedWordsIEnum = this.words
-                .Where(w=>
+                .Where(w =>
                     w.DateAdded >= startDate &&
                     w.DateAdded <= endDate)
                 .Where(w => acceptedTypes.Contains(w.Type));
 
             if (quizType == QuizType.Preposition)
             {
-                acceptedWordsIEnum = acceptedWordsIEnum.Where(w => w.Prepositions.Count > 0);
+                acceptedWordsIEnum = acceptedWordsIEnum
+                    .Where(w => w.Prepositions.Where(p => p != string.Empty).Count() > 0);
             }
 
             var acceptedWordsList = acceptedWordsIEnum.ToList();
@@ -156,7 +163,7 @@
             {
                 int ind = this.rnd.Next() % acceptedWordsCount;
 
-                while (result.Contains(this.words[ind]))
+                while (result.Contains(acceptedWordsList[ind]))
                 {
                     ind = this.rnd.Next() % acceptedWordsCount;
                 }
@@ -180,18 +187,18 @@
             this.announcer.NoWordsWereRemoved(word);
         }
 
-        public virtual void ReplaceWord(IWord word)
+        public virtual void ReplaceWord(IWord wordToReplace, IWord replacement)
         {
-            if (this.words.Contains(word) == false)
+            if (this.words.Contains(wordToReplace) == false)
             {
                 throw new ArgumentException(
                     string.Format(
-                    "Cannot replace word {0} - word not in dict.", word.Content));
+                    "Cannot replace word {0} - word not in dict.", wordToReplace.Content));
             }
 
-            int index = this.words.IndexOf(word);
+            int index = this.words.IndexOf(wordToReplace);
 
-            this.words[index] = word;
+            this.words[index] = replacement;
         }
 
         public virtual void SaveWords()

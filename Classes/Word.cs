@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
 
     using MyDictionary.Enums;
@@ -110,6 +111,12 @@
                         "Word definition cannot be null");
                 }
 
+                if (value.Count < 1)
+                {
+                    throw new ArgumentException(
+                        "Word must have at least one definition");
+                }
+
                 this.definition = value;
             }
         }
@@ -213,14 +220,16 @@
                 sb.Append(" ");
             }
 
-            sb.AppendLine(this.Content);
-            sb.Append(this.Type.ToString().ToLower());
+            sb.Append(this.Content);
 
             if (this.Type == WordType.Noun)
             {
-                sb.Append(", plural: ");
+                sb.Append(" ");
                 sb.Append(this.Plural);
             }
+
+            sb.AppendLine();
+            sb.Append(this.Type.ToString().ToLower());
 
             if (this.Type == WordType.Verb)
             {
@@ -229,6 +238,19 @@
 
             sb.AppendLine();
             sb.AppendLine();
+
+            if (this.Type == WordType.Verb &&
+                this.Prepositions.Where(p => p != string.Empty).Count() > 0)
+            {
+                sb.AppendLine("Prepositions:");
+
+                foreach (var preposition in this.Prepositions)
+                {
+                    sb.AppendLine("- " + preposition);
+                }
+
+                sb.AppendLine();
+            }
 
             sb.AppendLine("Definitions:");
             sb.Append("- ");
