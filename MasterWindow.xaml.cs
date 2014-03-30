@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
@@ -603,8 +604,6 @@
 
         private void FindWord_ButtClick(object sender, RoutedEventArgs e)
         {
-            this.InitializeEditWordTab();
-
             var searchFor = searchWordTB.Text.Trim();
 
             var searchResult = this.engine.GetWord(searchFor);
@@ -613,12 +612,16 @@
             {
                 this.announcer.WordNotFound(searchFor);
 
+                this.InitializeEditWordTab();
+
                 this.searchWordTB.Focus();
                 this.searchWordTB.SelectAll();
 
                 return;
             }
-            
+
+            this.InitializeEditWordTab();
+
             this.LoadWordItems(searchResult);
 
             this.sDefinitionsStackPanel.Children
@@ -657,7 +660,7 @@
                 box.Visibility = Visibility.Visible;
                 box.Text = definitions[defIndex++];
             }
-            
+
             // Set specific fields, depending on word type
             if (word.Type == WordType.Noun)
             {
@@ -734,7 +737,7 @@
         {
             var confirmation =
                 this.announcer.AskForConfirmation(
-                        string.Format("Are you sure you want to save changes to {0}?", 
+                        string.Format("Are you sure you want to save changes to {0}?",
                             this.wordToEdit.Content));
 
             if (confirmation == false) return;
@@ -821,10 +824,10 @@
                 return;
             }
 
-            var confirmation = 
+            var confirmation =
                 this.announcer.AskForConfirmation(
                     string.Format(
-                        "Are you sure you want to delete word {0}?", 
+                        "Are you sure you want to delete word {0}?",
                             lookingFor));
 
             if (confirmation == false) return;
@@ -850,6 +853,18 @@
             if (e.Key != Key.Enter && e.Key != Key.Return) return;
 
             this.FindWord_ButtClick(new object(), new RoutedEventArgs());
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.quizzesTab.IsSelected)
+            {
+                var oldestWordAddedDate = this.engine
+                    .GetAllWords()
+                    .Min(w => w.DateAdded);
+
+                this.quizStartDate.SelectedDate = oldestWordAddedDate;
+            }
         }
     }
 }

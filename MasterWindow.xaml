@@ -9,7 +9,7 @@
 
     <!--<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">-->
 
-    <TabControl Focusable="True">
+    <TabControl Focusable="True" SelectionChanged="TabControl_SelectionChanged" >
 
         <!--Dictionary Tab-->
 
@@ -189,9 +189,9 @@
                                 <Button Width="20" Content="ß" Click="CharacterButtClick" TabIndex="-1"/>
                             </StackPanel>
 
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="5,0,0,0">
-                                <TextBlock Text="Date:" VerticalAlignment="Center" Margin="5"/>
-                                <DatePicker x:Name="sAddWDatePicker" Focusable="False" VerticalAlignment="Center" Margin="0,5,5,5" FirstDayOfWeek="Monday" SelectedDateFormat="Long" TabIndex="-1"/>
+                            <StackPanel Orientation="Vertical" DockPanel.Dock="Right" Margin="5,0,5,0">
+                                <TextBlock Text="Date:" VerticalAlignment="Center" />
+                                <DatePicker x:Name="sAddWDatePicker" Focusable="False" VerticalAlignment="Center" Margin="0,2,5,5" FirstDayOfWeek="Monday" SelectedDateFormat="Long" DisplayDateEnd="{x:Static sys:DateTime.Now}" TabIndex="-1"/>
                             </StackPanel>
 
                         </DockPanel>
@@ -226,7 +226,7 @@
                             </DockPanel>
 
                             <DockPanel Tag="Definition Noun Adjective Verb" DockPanel.Dock="Top" VerticalAlignment="Center">
-                                <StackPanel x:Name="sDefinitionsStackPanel" Visibility="Collapsed" Margin="0">
+                                <StackPanel x:Name="sDefinitionsStackPanel" Visibility="Visible" Margin="0">
                                     <TextBlock Text="Definitions:" Margin="5,0"/>
                                     <TextBox x:Name="sDefinitionTB1" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
                                     <TextBox x:Name="sDefinitionTB2" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
@@ -303,7 +303,7 @@
 
         <!--Quizzes tab-->
 
-        <TabItem Header="Quizzes" Loaded="Quizzes_SetDates">
+        <TabItem x:Name="quizzesTab" Header="Quizzes" Loaded="Quizzes_SetDates">
             <DockPanel LastChildFill="False" Margin="5,0">
 
 
