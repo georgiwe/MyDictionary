@@ -41,7 +41,7 @@
                     return "Foreign to Native Language Word Quiz";
 
                 case QuizType.VerbPastTenses:
-                    return "Native to Foreign Language Word Quiz";
+                    return "Verb Past Tenses Quiz";
 
                 case QuizType.Article:
                     return "Article Quiz";
@@ -50,7 +50,7 @@
                     return "Preposition Quiz";
 
                 case QuizType.NativeToForeign:
-                    return "Verb Past Tenses Quiz";
+                    return "Native to Foreign Language Word Quiz";
 
                 default:
                     throw new ArgumentOutOfRangeException("Unexpected quiz type. Cannot parse.");

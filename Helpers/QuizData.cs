@@ -19,7 +19,7 @@
             this.Question = question;
             this.Answer = answer;
             this.correctness = correctness;
-            this.Correct = corrAnswer;
+            this.CorrectAnswer = corrAnswer;
             this.QuestionNumber = qNum.ToString();
         }
 
@@ -29,7 +29,7 @@
 
         public string Answer { get; private set; }
 
-        public string Correct { get; private set; }
+        public string CorrectAnswer { get; private set; }
 
         public string Correctness
         {

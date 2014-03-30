@@ -260,7 +260,7 @@
             {
                 sb.AppendLine();
                 sb.AppendLine("Verb forms:");
-                sb.Append(" - 3.P.Sg.Präsens: ");
+                sb.Append(" - 3 P. Sg. : ");
                 sb.AppendLine(this.PSgPras);
                 sb.Append(" - Präteritum: ");
                 sb.AppendLine(this.Pratitium);

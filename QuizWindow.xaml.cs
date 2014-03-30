@@ -385,6 +385,12 @@
             }
 
             double definitionsCount = (double)currWord.Definition.Count;
+            var malus = definitionsCount - answers.Count();
+
+            if (malus < 0)
+            {
+                guessed += malus;
+            }
 
             if (guessed / definitionsCount > 0.5)
             {
@@ -427,6 +433,9 @@
             int guessed = 0;
             var answers = this.SplitAndTrimAnswers(answer);
 
+            this.correctAnswers[currQind] =
+                currWord.Partizip2 + ", " + currWord.PSgPras + ", " + currWord.Pratitium;
+
             if (answers.Count() < 2)
             {
                 return;
@@ -451,9 +460,6 @@
             {
                 this.correctness[currQind] = true;
             }
-
-            this.correctAnswers[currQind] = 
-                currWord.Partizip2 + ", " + currWord.PSgPras + ", " + currWord.Pratitium;
         }
 
         private void JudgePrepositionsQuiz(IWord currWord, string answer)
@@ -600,9 +606,12 @@
             if (visibleEmpties.Count() < 2)
             {
                 var tbToShow = allTBs
-                    .First(tb => tb.Visibility == Visibility.Collapsed);
+                    .FirstOrDefault(tb => tb.Visibility == Visibility.Collapsed);
 
-                tbToShow.Visibility = Visibility.Visible;
+                if (tbToShow != null)
+                {
+                    tbToShow.Visibility = Visibility.Visible;
+                }
             }
         }
 
