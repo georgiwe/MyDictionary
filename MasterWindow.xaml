@@ -171,7 +171,7 @@
         <TabItem Header="Edit Word">
             <DockPanel>
                 <DockPanel DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,5,0,0">
-                    <TextBox x:Name="searchWordTB" MinWidth="150" Margin="5" LostFocus="SaveActiveTB" />
+                    <TextBox x:Name="searchWordTB" MinWidth="150" Margin="5" LostFocus="SaveActiveTB" KeyDown="searchWordTB_KeyDown" />
                     <Button x:Name="searchWordButt" Content="Find Word" Margin="5" ToolTip="Load the word's items, if it is in the dictionary" Click="FindWord_ButtClick"/>
 
                 </DockPanel>
@@ -226,7 +226,7 @@
                             </DockPanel>
 
                             <DockPanel Tag="Definition Noun Adjective Verb" DockPanel.Dock="Top" VerticalAlignment="Center">
-                                <StackPanel x:Name="sDefinitionsStackPanel" Visibility="Visible" Margin="0">
+                                <StackPanel x:Name="sDefinitionsStackPanel" Visibility="Collapsed" Margin="0">
                                     <TextBlock Text="Definitions:" Margin="5,0"/>
                                     <TextBox x:Name="sDefinitionTB1" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>
                                     <TextBox x:Name="sDefinitionTB2" MinWidth="110" Margin="5,2.5" LostFocus="SaveActiveTB" TextChanged="EditWordDefBoxChanged"/>

@@ -50,9 +50,10 @@
                     <ListView x:Name="report" BorderBrush="Black">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn x:Name="questionCol" Header="Question" Width="200" DisplayMemberBinding="{Binding Question}"/>
-                                <GridViewColumn x:Name="correctAnswer" Header="Correct answers" Width="200" DisplayMemberBinding="{Binding Correct}"/>
-                                <GridViewColumn x:Name="answerCol" Header="Your answers" Width="200" DisplayMemberBinding="{Binding Answer}"/>
+                                <GridViewColumn x:Name="qNumCol" Header="№" Width="25" DisplayMemberBinding="{Binding QuestionNumber}"/>
+                                <GridViewColumn x:Name="questionCol" Header="Question" Width="198" DisplayMemberBinding="{Binding Question}"/>
+                                <GridViewColumn x:Name="correctAnswer" Header="Correct answers" Width="198" DisplayMemberBinding="{Binding Correct}"/>
+                                <GridViewColumn x:Name="answerCol" Header="Your answers" Width="195" DisplayMemberBinding="{Binding Answer}"/>
                                 <GridViewColumn x:Name="correctCol" Header="Correct" Width="50" DisplayMemberBinding="{Binding Correctness}"/>
                             </GridView>
                         </ListView.View>

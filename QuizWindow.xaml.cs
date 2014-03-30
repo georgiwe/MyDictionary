@@ -35,14 +35,14 @@
         private Random rnd;
         private IAnnouncer announcer;
         private bool[] correctness;
-        private IList<IWord> words;
+        private IList<IWord> questionWords;
         private string[] answers;
         private QuizType quizType;
         private int numOfQuestions;
         private int currQind;
         private IDictionaryEngine engine;
-        private IList<string> questions;
-        private IList<string> correctAnswers;
+        private string[] questions;
+        private string[] correctAnswers;
 
         public QuizWindow(
             string quizType, int numOfQuestions, IDictionaryEngine engine,
@@ -57,8 +57,6 @@
             this.startDate = startDate;
             this.endDate = endDate;
 
-            this.questions = new List<string>();
-            this.correctAnswers = new List<string>();
             this.announcer = new WPFannouncer();
             this.rnd = new Random();
 
@@ -88,24 +86,26 @@
 
             var acceptedTypes = this.DetermineAcceptedTypes();
 
-            this.words = this.engine.GenerateQuiz(
+            this.questionWords = this.engine.GenerateQuiz(
                 this.numOfQuestions, acceptedTypes, 
                 this.quizType, this.startDate, this.endDate);
 
-            if (this.words == null ||
-                this.words.Count == 0)
+            if (this.questionWords == null ||
+                this.questionWords.Count == 0)
             {
                 throw new QuizException(
                     "Not enough appropriate questions in dictionary.");
             }
-
-            this.answers = new string[this.words.Count];
-            this.correctness = new bool[this.words.Count];
+            
+            this.questions = new string[this.questionWords.Count];
+            this.answers = new string[this.questionWords.Count];
+            this.correctness = new bool[this.questionWords.Count];
+            this.correctAnswers = new string[this.questionWords.Count];
 
             this.qNumIndicator.Text = "1";
-            this.totalQs.Text = this.words.Count.ToString();
+            this.totalQs.Text = this.questionWords.Count.ToString();
 
-            var currWord = this.words[this.currQind];
+            var currWord = this.questionWords[this.currQind];
 
             this.HandleAnswerTBsVisibility();
 
@@ -167,7 +167,8 @@
                     break;
             }
 
-            this.questions.Add(this.questionTBL.Text);
+            this.questions[currQind] = this.questionTBL.Text;
+            this.answerTB.Focus();
         }
 
         private void RenderNativeToForeign(IWord word)
@@ -214,13 +215,13 @@
 
         private void MoveToQuestion(int qIndex)
         {
-            if (qIndex < 0 || qIndex >= this.words.Count)
+            if (qIndex < 0 || qIndex >= this.questionWords.Count)
             {
                 throw new ArgumentOutOfRangeException("Question number is outside the accepted range");
             }
 
             this.currQind = qIndex;
-            var wordToRender = this.words[currQind]; // change from march 30th - ind changed to currQind from qIndex
+            var wordToRender = this.questionWords[currQind]; // change from march 30th - ind changed to currQind from qIndex
 
             this.qNumIndicator.Text = (this.currQind + 1).ToString();
             this.AlternateAnswerButtonName();
@@ -297,7 +298,7 @@
             this.HandleAnswerTBsVisibility();
             this.answerTB.Focus();
 
-            if (this.currQind + 1 < this.words.Count)
+            if (this.currQind + 1 < this.questionWords.Count)
             {
                 this.MoveToQuestion(this.currQind + 1);
             }
@@ -318,7 +319,7 @@
 
         private void JudgeAnswer(string answer)
         {
-            var currWord = this.words[this.currQind];
+            var currWord = this.questionWords[this.currQind];
 
             switch (this.quizType)
             {
@@ -365,7 +366,7 @@
                 this.correctness[currQind] = true;
             }
 
-            this.correctAnswers.Add(compareWith);
+            this.correctAnswers[currQind] = compareWith;
         }
 
         private void JudgeForeignToNative(IWord currWord, string answer)
@@ -390,7 +391,7 @@
                 this.correctness[currQind] = true;
             }
 
-            this.correctAnswers.Add(string.Join(", ", currWord.Definition));
+            this.correctAnswers[currQind] = string.Join(", ", currWord.Definition);
         }
 
         private void JudgeArticleQuiz(IWord currWord, string answer)
@@ -418,7 +419,7 @@
                 this.correctness[currQind] = true;
             }
 
-            this.correctAnswers.Add(currWord.Article.ToString());
+            this.correctAnswers[currQind] = currWord.Article.ToString();
         }
 
         private void JudgeVerbPastTensesQuiz(IWord currWord, string answer)
@@ -451,8 +452,8 @@
                 this.correctness[currQind] = true;
             }
 
-            this.correctAnswers.Add(
-                currWord.Partizip2 + ", " + currWord.PSgPras + ", " + currWord.Pratitium);
+            this.correctAnswers[currQind] = 
+                currWord.Partizip2 + ", " + currWord.PSgPras + ", " + currWord.Pratitium;
         }
 
         private void JudgePrepositionsQuiz(IWord currWord, string answer)
@@ -471,18 +472,26 @@
             }
 
             double numOfPrepos = (double)currWord.Prepositions.Count;
+            var malus = numOfPrepos - answers.Count();
+
+            if (malus < 0)
+            {
+                guessed += malus;
+            }
 
             if (guessed / numOfPrepos > 0.5)
             {
                 this.correctness[currQind] = true;
             }
 
-            this.correctAnswers.Add(string.Join(", ", currWord.Prepositions));
+            var correctAnswer = string.Join(", ", currWord.Prepositions);
+
+            this.correctAnswers[currQind] = correctAnswer;
         }
 
         private void AlternateAnswerButtonName()
         {
-            if (this.currQind == this.words.Count - 1)
+            if (this.currQind == this.questionWords.Count - 1)
             {
                 (this.answerButt.Content as TextBlock).Text = "Complete Quiz";
             }
@@ -494,13 +503,14 @@
 
         private void QuizEnded()
         {
-            var resultsWindow = new QuizResultsWindow(this.quizType, this.words, this.questions, this.correctAnswers, this.answers, this.correctness);
+            var resultsWindow = new QuizResultsWindow(this.quizType, this.questionWords, this.questions, this.correctAnswers, this.answers, this.correctness);
 
             resultsWindow.Owner = this.Owner;
             resultsWindow.Activate();
             resultsWindow.Show();
 
             this.Close();
+            resultsWindow.Focus();
         }
 
         private void QuizWindow_Closed(object sender, EventArgs e)

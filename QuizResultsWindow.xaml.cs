@@ -33,7 +33,7 @@
         private int corrs;
         private int wrngs;
 
-        public QuizResultsWindow(QuizType quizType, IList<IWord> words, IList<string> questions, IList<string> correctAnswers, string[] answers, bool[] correctness)
+        public QuizResultsWindow(QuizType quizType, IList<IWord> words, IList<string> questions, string[] correctAnswers, string[] answers, bool[] correctness)
         {
             InitializeComponent();
 
@@ -70,7 +70,7 @@
                 var corAns = this.correctAnswers[i] == string.Empty ? "None" : this.correctAnswers[i];
 
                 data[i] = new QuizData(
-                    this.questions[i], corAns, answers, this.correctness[i]);
+                    i + 1, this.questions[i], corAns, answers, this.correctness[i]);
             }
 
             this.report.ItemsSource = data;

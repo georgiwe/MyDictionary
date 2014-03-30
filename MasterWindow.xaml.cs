@@ -539,15 +539,6 @@
             this.ResetContents(this.wordElemsWrapPanel);
         }
 
-        //private void EditWordEmptyAll_ButtClick(object sender, RoutedEventArgs e)
-        //{
-        //    this.ResetContents(this.sWordElemsWrapPanel);
-        //    this.ResetContents(this.sTypeAndDatePanel);
-        //    this.searchWordTB.Text = string.Empty;
-
-        //    this.HideAllPanels(this.searchData);
-        //}
-
         private void ResetContents(Panel panel)
         {
             this.EmptyAllTextBoxes(panel);
@@ -691,6 +682,8 @@
 
         private void FillVerbItems(IWord verb)
         {
+            this.verbContainer.Visibility = Visibility.Visible;
+
             // Fill verb forms
             this.sPsgprasTB.Text = verb.PSgPras;
             this.sPrateritumTB.Text = verb.Pratitium;
@@ -850,6 +843,13 @@
             this.InitializeEditWordTab();
 
             this.LoadWordItems(this.wordToEdit);
+        }
+
+        private void searchWordTB_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter && e.Key != Key.Return) return;
+
+            this.FindWord_ButtClick(new object(), new RoutedEventArgs());
         }
     }
 }
