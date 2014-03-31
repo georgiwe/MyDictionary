@@ -115,15 +115,5 @@
                 this.InitializeData();
             }
         }
-
-        //private void Button_Click_1(object sender, RoutedEventArgs e)
-        //{
-        //    var resultsWindow = new QuizResultsWindow(QuizType.ForeignToNative, null, null, null, null);
-
-        //    resultsWindow.Activate();
-        //    resultsWindow.Show();
-
-        //    this.Close();
-        //}
     }
 }

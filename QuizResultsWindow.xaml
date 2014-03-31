@@ -2,64 +2,64 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Quiz Results"
-        Height="640"
+        Height="600"
         Width="730"
         WindowStartupLocation="CenterScreen"
         Closed="Window_Closed"
         Icon="pack://application:,,,/Resources/icon.bmp">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+    <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">-->
+
+    <Grid ShowGridLines="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="85"/>
+            <RowDefinition Height="6*"/>
+        </Grid.RowDefinitions>
+
+        <Border BorderBrush="Black" BorderThickness="3" Margin="5"/>
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2" Margin="5"/>
 
         <Grid ShowGridLines="False">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="85"/>
-                <RowDefinition Height="6*"/>
-            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
 
-            <Border BorderBrush="Black" BorderThickness="3" Margin="5"/>
-            <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2" Margin="5"/>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Top" Text="Questions" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                <TextBlock x:Name="totalQs" Text="100" TextAlignment="Center" FontSize="34" />
+            </StackPanel>
 
-            <Grid ShowGridLines="False">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Top" Text="Correct Anwers" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                <TextBlock x:Name="correctCount" Text="50" TextAlignment="Center" FontSize="34" />
+            </StackPanel>
 
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock DockPanel.Dock="Top" Text="Questions" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="totalQs" Text="100" TextAlignment="Center" FontSize="34" />
-                </StackPanel>
-
-                <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock DockPanel.Dock="Top" Text="Correct Anwers" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="correctCount" Text="50" TextAlignment="Center" FontSize="34" />
-                </StackPanel>
-
-                <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock DockPanel.Dock="Top" Text="Incorrect Anwers" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="wrongCount" Text="50" TextAlignment="Center" FontSize="34" />
-                </StackPanel>
-            </Grid>
-
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxWidth="700">
-                <DockPanel x:Name="reportPanel" Margin="10" MaxWidth="672">
-                    <TextBlock DockPanel.Dock="Top" Text="Quiz Report" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,5,5,0" FontWeight="Bold" FontSize="35"/>
-                    <TextBlock x:Name="quizTypeTBL" DockPanel.Dock="Top" Text="Quiz type" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,0,5,10" FontWeight="Bold" FontSize="25"/>
-
-                    <ListView x:Name="report" BorderBrush="Black" MaxWidth="672">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn x:Name="qNumCol" Header="№" Width="25" DisplayMemberBinding="{Binding QuestionNumber}"/>
-                                <GridViewColumn x:Name="questionCol" Header="Question" Width="135" DisplayMemberBinding="{Binding Question}"/>
-                                <GridViewColumn x:Name="correctAnswer" Header="Correct answers" Width="229" DisplayMemberBinding="{Binding CorrectAnswer}"/>
-                                <GridViewColumn x:Name="answerCol" Header="Your answers" Width="227" DisplayMemberBinding="{Binding Answer}"/>
-                                <GridViewColumn x:Name="correctCol" Header="Correct" Width="50" DisplayMemberBinding="{Binding Correctness}"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </DockPanel>
-            </ScrollViewer>
+            <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Top" Text="Incorrect Anwers" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                <TextBlock x:Name="wrongCount" Text="50" TextAlignment="Center" FontSize="34" />
+            </StackPanel>
         </Grid>
-    </ScrollViewer>
+
+        <DockPanel x:Name="reportPanel" Grid.Row="1" LastChildFill="False" Margin="10" HorizontalAlignment="Center" MaxWidth="700">
+            <TextBlock DockPanel.Dock="Top" Text="Quiz Report" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,5,5,0" FontWeight="Bold" FontSize="35"/>
+            <TextBlock x:Name="quizTypeTBL" DockPanel.Dock="Top" Text="Quiz type" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,0,5,10" FontWeight="Bold" FontSize="25"/>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxWidth="700">
+                <ListView x:Name="report" DockPanel.Dock="Top" BorderBrush="Black" MaxWidth="672" TextOptions.TextFormattingMode="Display">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn x:Name="qNumCol" Header="№" Width="25" DisplayMemberBinding="{Binding QuestionNumber}"/>
+                            <GridViewColumn x:Name="questionCol" Header="Question" Width="135" DisplayMemberBinding="{Binding Question}"/>
+                            <GridViewColumn x:Name="correctAnswer" Header="Correct answers" Width="229" DisplayMemberBinding="{Binding CorrectAnswer}"/>
+                            <GridViewColumn x:Name="answerCol" Header="Your answers" Width="227" DisplayMemberBinding="{Binding Answer}"/>
+                            <GridViewColumn x:Name="correctCol" Header="Correct" Width="50" DisplayMemberBinding="{Binding Correctness}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+    <!--</ScrollViewer>-->
 </Window>

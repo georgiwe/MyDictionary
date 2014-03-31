@@ -33,7 +33,9 @@
         private int corrs;
         private int wrngs;
 
-        public QuizResultsWindow(QuizType quizType, IList<IWord> words, IList<string> questions, string[] correctAnswers, string[] answers, bool[] correctness)
+        public QuizResultsWindow(
+            QuizType quizType, IList<IWord> words, IList<string> questions, 
+            string[] correctAnswers, string[] answers, bool[] correctness)
         {
             InitializeComponent();
 

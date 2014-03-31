@@ -10,6 +10,7 @@
     using MyDictionary.Enums;
     using MyDictionary.Helpers;
     using MyDictionary.Interfaces;
+    using System.Globalization;
 
     public class Engine : IDictionaryEngine
     {
@@ -217,7 +218,7 @@
                 sw.WriteLine(word.Pratitium);
                 sw.WriteLine(word.Partizip2);
                 sw.WriteLine(word.PSgPras);
-                sw.WriteLine(word.DateAdded);
+                sw.WriteLine(((DateTime)(word.DateAdded)).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture));
                 sw.WriteLine(string.Join(" ", word.Prepositions));
                 sw.WriteLine(word.Case);
                 sw.WriteLine(EndOfWord);
@@ -263,7 +264,7 @@
                 string pratit = info[5];
                 string partizip2 = info[6];
                 string psgpras = info[7];
-                DateTime? added = DateTime.Parse(info[8]);
+                DateTime? added = DateTime.ParseExact(info[8], "dd.MM.yyyy", CultureInfo.InvariantCulture);
                 var prepos = new List<string>(info[9].Split());
                 var vCase = (VerbCase)Enum.Parse(typeof(VerbCase), info[10]);
 
