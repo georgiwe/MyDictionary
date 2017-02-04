@@ -107,7 +107,6 @@
             MessageBox.Show(msg, DefaultCaption, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-
         public void AlreadyExists(IWord word, string msg = "Word {0} already exists in the dictionery!")
         {
             msg = string.Format(msg, word.Content);

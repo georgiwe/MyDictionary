@@ -46,14 +46,14 @@
             <TextBlock DockPanel.Dock="Top" Text="Quiz Report" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,5,5,0" FontWeight="Bold" FontSize="35"/>
             <TextBlock x:Name="quizTypeTBL" DockPanel.Dock="Top" Text="Quiz type" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,0,5,10" FontWeight="Bold" FontSize="25"/>
 
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxWidth="700">
-                <ListView x:Name="report" DockPanel.Dock="Top" BorderBrush="Black" MaxWidth="672" TextOptions.TextFormattingMode="Display">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxWidth="705">
+                <ListView x:Name="report" DockPanel.Dock="Top" BorderBrush="Black" MaxWidth="677" TextOptions.TextFormattingMode="Display">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn x:Name="qNumCol" Header="№" Width="25" DisplayMemberBinding="{Binding QuestionNumber}"/>
-                            <GridViewColumn x:Name="questionCol" Header="Question" Width="135" DisplayMemberBinding="{Binding Question}"/>
-                            <GridViewColumn x:Name="correctAnswer" Header="Correct answers" Width="229" DisplayMemberBinding="{Binding CorrectAnswer}"/>
-                            <GridViewColumn x:Name="answerCol" Header="Your answers" Width="227" DisplayMemberBinding="{Binding Answer}"/>
+                            <GridViewColumn x:Name="qNumCol" Header="№" Width="30" DisplayMemberBinding="{Binding QuestionNumber}"/>
+                            <GridViewColumn x:Name="questionCol" Header="Question" Width="133" DisplayMemberBinding="{Binding Question}"/>
+                            <GridViewColumn x:Name="correctAnswer" Header="Correct answers" Width="227" DisplayMemberBinding="{Binding CorrectAnswer}"/>
+                            <GridViewColumn x:Name="answerCol" Header="Your answers" Width="225" DisplayMemberBinding="{Binding Answer}"/>
                             <GridViewColumn x:Name="correctCol" Header="Correct" Width="50" DisplayMemberBinding="{Binding Correctness}"/>
                         </GridView>
                     </ListView.View>

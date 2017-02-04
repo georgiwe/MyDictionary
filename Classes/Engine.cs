@@ -206,25 +206,24 @@
         {
             if (this.words.Count == 0) return;
 
-            var sw = new StreamWriter(this.saveLoadWordsFilePath);
-
-            foreach (IWord word in this.words)
+            using (var sw = new StreamWriter(this.saveLoadWordsFilePath))
             {
-                sw.WriteLine(word.Content);
-                sw.WriteLine(word.Type.ToString());
-                sw.WriteLine(word.Plural);
-                sw.WriteLine(string.Join("|", word.Definition));
-                sw.WriteLine(word.Article);
-                sw.WriteLine(word.Pratitium);
-                sw.WriteLine(word.Partizip2);
-                sw.WriteLine(word.PSgPras);
-                sw.WriteLine(((DateTime)(word.DateAdded)).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture));
-                sw.WriteLine(string.Join(" ", word.Prepositions));
-                sw.WriteLine(word.Case);
-                sw.WriteLine(EndOfWord);
+                foreach (IWord word in this.words)
+                {
+                    sw.WriteLine(word.Content);
+                    sw.WriteLine(word.Type.ToString());
+                    sw.WriteLine(word.Plural);
+                    sw.WriteLine(string.Join("|", word.Definition));
+                    sw.WriteLine(word.Article);
+                    sw.WriteLine(word.Pratitium);
+                    sw.WriteLine(word.Partizip2);
+                    sw.WriteLine(word.PSgPras);
+                    sw.WriteLine(((DateTime)(word.DateAdded)).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture));
+                    sw.WriteLine(string.Join(" ", word.Prepositions));
+                    sw.WriteLine(word.Case);
+                    sw.WriteLine(EndOfWord);
+                }
             }
-
-            sw.Dispose();
         }
 
         public virtual void LoadWords()
@@ -234,46 +233,45 @@
                 return;
             }
 
-            var sr = new StreamReader(this.saveLoadWordsFilePath);
-
-            var sb = new StringBuilder();
-
-            string line = string.Empty;
-
-            while ((line = sr.ReadLine()) != null)
+            using (var sr = new StreamReader(this.saveLoadWordsFilePath))
             {
-                sb.Append(line + (line == "%" ? string.Empty : WordAnchor.ToString()));
-            }
+                var sb = new StringBuilder();
 
-            string[] allWordsInfo = sb.ToString().Split(new char[] { EndOfWord }, StringSplitOptions.RemoveEmptyEntries);
+                string line = string.Empty;
 
-            foreach (var wordInfo in allWordsInfo)
-            {
-                string[] info = wordInfo.Split(new char[] { WordAnchor });
-
-                if (info[0] == string.Empty)
+                while ((line = sr.ReadLine()) != null)
                 {
-                    break;
+                    sb.Append(line + (line == "%" ? string.Empty : WordAnchor.ToString()));
                 }
 
-                WordType type = (WordType)Enum.Parse(typeof(WordType), info[1]);
-                WordArticles article = (WordArticles)Enum.Parse(typeof(WordArticles), info[4]);
-                string content = info[0];
-                IList<string> definition = new List<string>(info[3].Split('|'));
-                string plural = info[2];
-                string pratit = info[5];
-                string partizip2 = info[6];
-                string psgpras = info[7];
-                DateTime? added = DateTime.ParseExact(info[8], "dd.MM.yyyy", CultureInfo.InvariantCulture);
-                var prepos = new List<string>(info[9].Split());
-                var vCase = (VerbCase)Enum.Parse(typeof(VerbCase), info[10]);
+                string[] allWordsInfo = sb.ToString().Split(new char[] { EndOfWord }, StringSplitOptions.RemoveEmptyEntries);
 
-                IWord word = this.factory.CreateWord(type, article, vCase, content, added, prepos, definition, plural, pratit, partizip2, psgpras);
+                foreach (var wordInfo in allWordsInfo)
+                {
+                    string[] info = wordInfo.Split(new char[] { WordAnchor });
 
-                this.words.Add(word);
+                    if (info[0] == string.Empty)
+                    {
+                        break;
+                    }
+
+                    WordType type = (WordType)Enum.Parse(typeof(WordType), info[1]);
+                    WordArticles article = (WordArticles)Enum.Parse(typeof(WordArticles), info[4]);
+                    string content = info[0];
+                    IList<string> definition = new List<string>(info[3].Split('|'));
+                    string plural = info[2];
+                    string pratit = info[5];
+                    string partizip2 = info[6];
+                    string psgpras = info[7];
+                    DateTime? added = DateTime.ParseExact(info[8], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                    var prepos = new List<string>(info[9].Split());
+                    var vCase = (VerbCase)Enum.Parse(typeof(VerbCase), info[10]);
+
+                    IWord word = this.factory.CreateWord(type, article, vCase, content, added, prepos, definition, plural, pratit, partizip2, psgpras);
+
+                    this.words.Add(word);
+                }
             }
-
-            sr.Dispose();
         }
 
         public virtual IList<IUser> ReadUsers()
